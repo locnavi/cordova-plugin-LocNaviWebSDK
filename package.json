@@ -1,0 +1,26 @@
+{
+  "name": "cordova-plugin-locnavi-websdk",
+  "version": "0.0.2",
+  "description": "Cordova LocNaviWebSDK Plugin",
+  "cordova": {
+    "id": "cordova-plugin-LocNaviWebSDK",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/locnavi/cordova-plugin-LocNaviWebSDK.git"
+  },
+  "keywords": [
+    "cordova",
+    "LocNaviWebSDK",
+    "LocNaviWebSDKPlugin",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "author": "zhangty",
+  "license": "MIT License"
+}

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:rim="http://www.blackberry.com/ns/widgets"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="cordova-plugin-LocNaviWebSDK"
+    version="0.0.2">
+    <name>LocNaviWebSDKPlugin</name>
+    <description>Cordova LocNaviWebSDK Plugin</description>
+    <license>MIT License</license>
+    <keywords>cordova,LocNaviWebSDKPlugin,LocNaviWebSDK</keywords>
+    <repo>https://github.com/locnavi/cordova-plugin-LocNaviWebSDK.git</repo>
+    <issue>https://github.com/locnavi/cordova-plugin-LocNaviWebSDK/issues</issue>
+
+    <js-module src="www/LocNaviWebSDKPlugin.js" name="LocNaviWebSDKPlugin">
+        <clobbers target="LocNaviWebSDKPlugin" />
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="LocNaviWebSDKPlugin" >
+                <param name="android-package" value="com.locnavi.cordova.plugin.websdk.LocNaviWebSDKPlugin"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/src/LocNaviWebSDKPlugin.java" target-dir="src/com/locnavi/cordova/plugin/websdk" />
+        <framework src="src/android/frameworks/locnavi.gradle" custom="true" type="gradleReference"/>
+    </platform>
+
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="LocNaviWebSDKPlugin">
+                <param name="ios-package" value="LocNaviWebSDKPlugin"/>
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/LocNaviWebSDKPlugin.h" />
+        <source-file src="src/ios/LocNaviWebSDKPlugin.m" />
+        <podspec>
+            <pods use-frameworks="true">
+                <pod name="LocNaviWebSDK" spec="~> 0.1.6" />
+            </pods>
+        </podspec>
+    </platform>
+
+</plugin>
