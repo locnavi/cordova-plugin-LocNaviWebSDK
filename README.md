@@ -8,6 +8,21 @@ cordova-plugin-LocNaviWebSDK 是一套面向 cordova 開發者使用LocNaviWebSD
 
 ## 插件引用
 
+### npm引用
+直接引入线上npm包
+
+```bash
+cordova plugin add cordova-plugin-locnavi-websdk
+```
+
+如果已經添加cordova-plugin-locnavi-websdk,請先移除,在進行添加
+
+```bash
+cordova plugin remove cordova-plugin-locnavi-websdk
+cordova plugin add cordova-plugin-locnavi-websdk
+```
+
+### 本地引用
 拷貝插件文件夾cordova-plugin-LocNaviWebSDK 至項目目錄 (相對路徑)
 
 ```bash
@@ -17,6 +32,8 @@ cordova plugin add ./cordova-plugin-LocNaviWebSDK
 如果已經添加cordova-plugin-LocNaviWebSDK,請先移除,在進行添加
 
 ```bash
+//先查看安装了什么插件
+cordova plugin list
 cordova plugin remove cordova-plugin-LocNaviWebSDK
 cordova plugin add ./cordova-plugin-LocNaviWebSDK
 ```
