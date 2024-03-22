@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-locnavi-websdk",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Cordova LocNaviWebSDK Plugin",
   "cordova": {
     "id": "cordova-plugin-LocNaviWebSDK",
