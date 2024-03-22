@@ -58,7 +58,7 @@
         <source-file src="src/ios/LocNaviWebSDKPlugin.m" />
         <podspec>
             <pods use-frameworks="true">
-                <pod name="LocNaviWebSDK" spec="~> 0.1.6" />
+                <pod name="LocNaviWebSDK" spec="~> 0.1.12" />
             </pods>
         </podspec>
     </platform>
