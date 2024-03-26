@@ -3,8 +3,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.locnavi:IndoorNavigationAndroidWebSDK:0.0.18'
+    implementation 'com.github.locnavi:IndoorNavigationAndroidWebSDK:1.0.19'
     implementation 'com.orhanobut:logger:2.2.0'
-    implementation 'org.altbeacon:android-beacon-library:2.19.4'
-    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+    implementation 'org.altbeacon:android-beacon-library:2.16.2'
 }

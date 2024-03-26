@@ -1,6 +1,7 @@
 # cordova 引入 LocNaviWebSDK 簡介
 
 cordova-plugin-LocNaviWebSDK 是一套面向 cordova 開發者使用LocNaviWebSDK的插件，開發者可自行引用該插件輕鬆實現地圖展示、導航至具體poi等功能。
+1.*的版本开始支持Android Support。0.*和2.*版本支持Android X库。iOS部分没有什么影响
 
 ## 獲取AppKey
 
@@ -12,7 +13,10 @@ cordova-plugin-LocNaviWebSDK 是一套面向 cordova 開發者使用LocNaviWebSD
 直接引入线上npm包
 
 ```bash
-cordova plugin add cordova-plugin-locnavi-websdk
+// android support 使用1.*的版本
+cordova plugin add cordova-plugin-locnavi-websdk@1.0.6
+// android x 使用0.*和2.*的版本
+cordova plugin add cordova-plugin-locnavi-websdk@2.0.6
 ```
 
 如果已經添加cordova-plugin-locnavi-websdk,請先移除,在進行添加
