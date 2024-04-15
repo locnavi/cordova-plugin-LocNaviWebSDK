@@ -22,7 +22,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-LocNaviWebSDK"
-    version="1.0.7">
+    version="1.0.8">
     <name>LocNaviWebSDKPlugin</name>
     <description>Cordova LocNaviWebSDK Plugin</description>
     <license>MIT License</license>
