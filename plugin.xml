@@ -21,8 +21,8 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="cordova-plugin-LocNaviWebSDK"
-    version="2.0.8">
+    id="cordova-plugin-locnavi-websdk"
+    version="2.0.10">
     <name>LocNaviWebSDKPlugin</name>
     <description>Cordova LocNaviWebSDK Plugin</description>
     <license>MIT License</license>
@@ -57,6 +57,8 @@
         <header-file src="src/ios/LocNaviWebSDKPlugin.h" />
         <source-file src="src/ios/LocNaviWebSDKPlugin.m" />
         <podspec>
+            <config>
+            </config>
             <pods use-frameworks="true">
                 <pod name="LocNaviWebSDK" spec="~> 0.1.12" />
             </pods>
