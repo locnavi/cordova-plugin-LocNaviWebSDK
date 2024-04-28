@@ -14,7 +14,7 @@ cordova-plugin-LocNaviWebSDK 是一套面向 cordova 開發者使用LocNaviWebSD
 
 ```bash
 // android support 使用1.*的版本
-cordova plugin add cordova-plugin-locnavi-websdk@1.0.11
+cordova plugin add cordova-plugin-locnavi-websdk@1.0.13
 // android x 使用0.*和2.*的版本
 cordova plugin add cordova-plugin-locnavi-websdk@2.0.11
 ```
