@@ -60,7 +60,7 @@
             <config>
             </config>
             <pods use-frameworks="true">
-                <pod name="LocNaviWebSDK" spec="~> 0.1.14" />
+                <pod name="LocNaviWebSDK" spec="~> 0.1.16" />
             </pods>
         </podspec>
     </platform>
