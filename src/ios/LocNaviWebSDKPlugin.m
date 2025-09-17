@@ -90,4 +90,25 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)showMapWithParmas:(CDVInvokedUrlCommand*)command {
+    CDVPluginResult* pluginResult = nil;
+    @try {
+        //显示地图
+        NSString *mapId = command.arguments[0];
+        NSString *params = command.arguments.count > 1 ? command.arguments[1] : @"";
+
+        LocNaviWebViewController *vc = [[LocNaviWebViewController alloc] initWithMapId:mapId params:params];
+        vc.modalPresentationStyle = UIModalPresentationFullScreen;
+        //可以使用其他方式弹出界面，如navigationController
+        CDVAppDelegate* delegate = [UIApplication sharedApplication].delegate;
+        [delegate.window.rootViewController presentViewController:vc animated:true completion:nil];
+        
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"showMapWithParmas ok"];
+    } @catch (NSException *exception) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    }
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 @end

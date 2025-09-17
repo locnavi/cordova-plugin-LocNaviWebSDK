@@ -30,6 +30,12 @@ public class LocNaviWebSDKPlugin extends CordovaPlugin {
             showMap(mapId, callbackContext);
             return true;
         }
+        if (action.equals("showMapWithParmas")) {
+            String mapId = args.getString(0);
+            String params = args.optString(1);
+            showMapWithParmas(mapId, params, callbackContext);
+            return true;
+        }
         if (action.equals("naviTo")) {
             String mapId = args.getString(0);
             String targetId = args.optString(1);
@@ -74,9 +80,13 @@ public class LocNaviWebSDKPlugin extends CordovaPlugin {
         callbackContext.success("showMap:" + mapId);
     }
 
-
     private void naviTo(String mapId, String targetId, CallbackContext callbackContext) {
         LocNaviWebSDK.openMap(this.cordova.getActivity(), mapId, targetId);
         callbackContext.success("naviTo:"+targetId);
+    }
+
+    private void showMapWithParmas(String mapId, String params, CallbackContext callbackContext) {
+        LocNaviWebSDK.openMapWithParmas(this.cordova.getActivity(), mapId, params);
+        callbackContext.success("showMapWithParmas:" + mapId + ", params:" + params);
     }
 }

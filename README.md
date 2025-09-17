@@ -16,7 +16,7 @@ cordova-plugin-LocNaviWebSDK 是一套面向 cordova 開發者使用LocNaviWebSD
 // android support 使用1.*的版本
 cordova plugin add cordova-plugin-locnavi-websdk@1.0.10
 // android x 使用0.*和2.*的版本
-cordova plugin add cordova-plugin-locnavi-websdk@2.0.14
+cordova plugin add cordova-plugin-locnavi-websdk@2.0.15
 ```
 
 如果已經添加cordova-plugin-locnavi-websdk,請先移除,在進行添加
@@ -81,6 +81,13 @@ cordova plugin add ./cordova-plugin-LocNaviWebSDK --force
 
 ```js
   LocNaviWebSDKPlugin.showMap(mapId, poi);
+```
+
+### 攜帶參數打開地圖
+
+```js
+  //支持打開地圖並蒐索地點
+  LocNaviWebSDKPlugin.showMapWithParmas(mapId, encodeURI("search=廁所"));
 ```
 
 ## 進入 IOS 和 Android 平台查看相關的 README 進行設置
