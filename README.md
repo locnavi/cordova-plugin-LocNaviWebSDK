@@ -16,7 +16,7 @@ cordova-plugin-LocNaviWebSDK 是一套面向 cordova 開發者使用LocNaviWebSD
 // android support 使用1.*的版本
 cordova plugin add cordova-plugin-locnavi-websdk@1.0.10
 // android x 使用0.*和2.*的版本
-cordova plugin add cordova-plugin-locnavi-websdk@2.0.15
+cordova plugin add cordova-plugin-locnavi-websdk@2.0.16
 ```
 
 如果已經添加cordova-plugin-locnavi-websdk,請先移除,在進行添加
@@ -69,6 +69,15 @@ cordova plugin add ./cordova-plugin-LocNaviWebSDK --force
             uploadApi: "https://xxx.com", //需要https
             uploadInterval: 1000
         });
+
+        //初始化定位服務
+        LocNaviWebSDKPlugin.initLocationService("HHrzBwF5dY", {
+             serverUrl: "https://l.sailstech.com",
+        }, (winParam) => {
+            console.log(winParam)
+        }, (error) => {
+            console.log(error);
+        });
 ```
 
 ### 顯示室內地圖
@@ -88,6 +97,46 @@ cordova plugin add ./cordova-plugin-LocNaviWebSDK --force
 ```js
   //支持打開地圖並蒐索地點
   LocNaviWebSDKPlugin.showMapWithParmas(mapId, encodeURI("search=廁所"));
+```
+
+### 初始化定位服務
+
+```js
+        LocNaviWebSDKPlugin.initLocationService("HHrzBwF5dY", {
+             serverUrl: "https://l.sailstech.com",
+        }, (winParam) => {
+            console.log(winParam)
+        }, (error) => {
+            console.log(error);
+        });
+```
+
+### 開始定位
+
+```js
+// 註意使用該功能前需要申請好授權
+// Android  
+// Manifest.permission.ACCESS_FINE_LOCATION,
+// Manifest.permission.BLUETOOTH_SCAN,
+// Manifest.permission.BLUETOOTH_CONNECT
+// 持续返回winParam，winParam一开始只是普通String告知调用成功，后面会返回定位信息 "{\"longitude\":\"NaN\",\"latitude\":\"NaN\",\"floor\":null}"
+            LocNaviWebSDKPlugin.startLocation({}, (winParam)=>{
+                                              console.log(winParam);
+                                        },
+                                        (error)=>{
+//                                            console.log(error);
+                                        });
+```
+
+### 停止定位
+
+```js
+            LocNaviWebSDKPlugin.stopLocation({}, (winParam)=>{
+                                            console.log(winParam);
+                                        },
+                                        (error)=>{
+                                            console.log(error);
+                                        });
 ```
 
 ## 進入 IOS 和 Android 平台查看相關的 README 進行設置

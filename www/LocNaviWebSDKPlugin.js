@@ -16,9 +16,24 @@ function showMapWithParmas (mapId, params, success, error) {
     exec(success, error, 'LocNaviWebSDKPlugin', 'showMapWithParmas', [mapId, params]);
 };
 
+function initLocationService (mapId, options, success, error) {
+    exec(success, error, 'LocNaviWebSDKPlugin', 'initLocationService', [mapId, options]);
+}
+
+function startLocation (options, success, error) {
+    exec(success, error, 'LocNaviWebSDKPlugin', 'startLocation', [options]);
+}
+
+function stopLocation (options, success, error) {
+    exec(success, error, 'LocNaviWebSDKPlugin', 'stopLocation', [options]);
+}
+
 module.exports = {
     init,
     showMap,
     naviTo,
-    showMapWithParmas
+    showMapWithParmas,
+    initLocationService,
+    startLocation,
+    stopLocation
 };

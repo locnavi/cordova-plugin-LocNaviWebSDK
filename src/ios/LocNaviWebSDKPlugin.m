@@ -111,4 +111,70 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)initLocationService:(CDVInvokedUrlCommand*)command {
+    CDVPluginResult* pluginResult = nil;
+    @try {
+        NSString *mapId = command.arguments[0];
+        NSDictionary *options = command.arguments.count > 1 ? command.arguments[1] : @{};
+        NSString *serverUrl = options[@"serverUrl"];
+        
+        //初始化SDK
+        LocNaviLocationService *service = [LocNaviLocationService sharedInstance];
+        [service setMapId:mapId];
+        if (serverUrl) {
+            [service setServerUrl:serverUrl];
+        }
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"init locationService ok"];
+    } @catch (NSException *exception) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    }
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)startLocation:(CDVInvokedUrlCommand*)command {
+    CDVPluginResult* pluginResult = nil;
+    @try {
+        NSString *mapId = command.arguments[0];
+        NSDictionary *options = command.arguments.count > 1 ? command.arguments[1] : @{};
+        NSString *serverUrl = options[@"serverUrl"];
+        
+        //初始化SDK
+        LocNaviLocationService *service = [LocNaviLocationService sharedInstance];
+        [service setMapId:mapId];
+        if (serverUrl) {
+            [service setServerUrl:serverUrl];
+        }
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"init locationService ok"];
+    } @catch (NSException *exception) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    }
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)stopLocation:(CDVInvokedUrlCommand*)command {
+    CDVPluginResult* pluginResult = nil;
+    @try {
+        NSString *mapId = command.arguments[0];
+        NSDictionary *options = command.arguments.count > 1 ? command.arguments[1] : @{};
+        NSString *serverUrl = options[@"serverUrl"];
+        
+        //初始化SDK
+        LocNaviLocationService *service = [LocNaviLocationService sharedInstance];
+        [service setMapId:mapId];
+        if (serverUrl) {
+            [service setServerUrl:serverUrl];
+        }
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"init locationService ok"];
+    } @catch (NSException *exception) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    }
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 @end
