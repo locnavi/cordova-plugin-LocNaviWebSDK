@@ -115,7 +115,7 @@ cordova plugin add ./cordova-plugin-LocNaviWebSDK --force
 
 ```js
 // 註意使用該功能前需要申請好授權
-// Android  
+// Android未授權時，內置會彈出授權框，用戶需要手動授權。授權完成後需要手動觸發startLocation，iOS則是自動觸發。
 // Manifest.permission.ACCESS_FINE_LOCATION,
 // Manifest.permission.BLUETOOTH_SCAN,
 // Manifest.permission.BLUETOOTH_CONNECT

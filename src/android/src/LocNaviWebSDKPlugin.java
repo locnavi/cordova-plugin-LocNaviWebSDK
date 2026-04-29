@@ -1,10 +1,21 @@
 package com.locnavi.cordova.plugin.websdk;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.provider.Settings;
+import android.text.TextUtils;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.locnavi.websdk.LocNaviLocationService;
@@ -26,6 +37,9 @@ import java.util.ArrayList;
  * This class echoes a string called from JavaScript.
  */
 public class LocNaviWebSDKPlugin extends CordovaPlugin {
+
+    private static final int REQUEST_CODE_BLUETOOTH_OPEN = 1000;
+    private static final int REQUEST_CODE_BLUETOOTH_SCAN = 1001;
 
     // 持久回调（用于持续推送定位结果）
     private CallbackContext locationCallbackContext;
@@ -172,6 +186,26 @@ public class LocNaviWebSDKPlugin extends CordovaPlugin {
             } else if (mode == 3) {
                 strMode = LocNaviConstants.LOCATION_MODE_GPS_AND_BEACON;
             }
+            if (mode != 2) {
+                // check if bluetooth is enabled
+                String btStatus = this.verifyBluetooth();
+                if (!btStatus.equals("ok")) {
+                    callbackContext.error(btStatus);
+                    return;
+                }
+            }
+            if (mode != 1 ) {
+                // check if location is enabled
+                if (!this.isLocationEnabled()) {
+                    callbackContext.error("location service is not enabled");
+                    return;
+                }
+            }
+            if (!this.checkAndRequestPermissions()) {
+                callbackContext.error("permission is not granted");
+                return;
+            }
+
             // 支援獲取更詳細的定位資訊
             service.start(strMode, enableDetail);
             // 可指定只開啟藍牙定位，暫未使用 GPS 定位，預設使用 LocNaviConstants.LOCATION_MODE_AUTO
@@ -237,6 +271,136 @@ public class LocNaviWebSDKPlugin extends CordovaPlugin {
                 callbackContext.error("stop location error:" + e.getMessage());
             }
         });
+    }
+
+    // 判斷手機定位功能是否開啟
+    private void verifyLocation() {
+        if (!this.isLocationEnabled()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this.cordova.getActivity())
+                    .setTitle("定位功能未開啟")
+                    .setMessage("室內定位需要開啟定位功能後方可使用")
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 跳轉至 GPS 設定介面
+                            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            cordova.getActivity().startActivity(intent);
+                        }
+                    });
+            builder.setCancelable(true);
+            builder.show();
+        }
+    }
+
+    // 判斷手機藍牙是否開啟，若未開啟則嘗試開啟。
+    public String verifyBluetooth() {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter == null) {
+            // 設備不支援藍牙
+            return "bluetooth not supported";
+        } else {
+            // 設備支援藍牙
+            if (!bluetoothAdapter.isEnabled()) {
+                // 藍牙未啟用，請求打開
+                Activity ctx = this.cordova.getActivity();
+                if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    // 請求藍牙連接權限
+                    ActivityCompat.requestPermissions(ctx,
+                            new String[]{ Manifest.permission.BLUETOOTH_CONNECT },
+                            REQUEST_CODE_BLUETOOTH_OPEN
+                    );
+                    return "requesting bluetooth permission"; // 等待用戶授權後再嘗試開啟藍牙
+                }
+                bluetoothAdapter.enable();
+            }
+        }
+        return "ok";
+    }
+
+    // 判斷定位功能是否開啟
+    private boolean isLocationEnabled() {
+        int locationMode = 0;
+        Context ctx = this.cordova.getActivity();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                locationMode = Settings.Secure.getInt(ctx.getContentResolver(), Settings.Secure.LOCATION_MODE);
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+        } else {
+            String locationProviders = Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
+        }
+    }
+
+    private boolean checkAndRequestPermissions() {
+        // 檢查並請求藍牙和位置權限
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Activity ctx = this.cordova.getActivity();
+            if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // 請求藍牙掃描和定位權限
+                ActivityCompat.requestPermissions(ctx,
+                        new String[]{
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.BLUETOOTH_SCAN,
+                                Manifest.permission.BLUETOOTH_CONNECT
+                        },
+                        REQUEST_CODE_BLUETOOTH_SCAN
+                );
+                return false; // 等待用戶授權後再嘗試開啟藍牙
+            }
+        }
+        return true;
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+        int[] grantResults) throws JSONException {
+            switch (requestCode) {
+                case REQUEST_CODE_BLUETOOTH_SCAN: {
+                    if (grantResults.length >= 1) {
+                        if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                            // 同意授權
+                            // this.startRangeBeacons();
+                        } else {
+                            // 拒絕授權
+                            // String msg;
+                            // if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                            //     msg = "請在設定頁面開啟【位置資訊】權限。";
+                            // } else if (grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                            //     msg = "請在設定頁面開啟【附近的裝置】權限。";
+                            // } else {
+                            //     msg = "請在設定頁面開啟【附近的裝置】和【位置資訊】權限。";
+                            // }
+                            // // 提示開啟授權
+                            // AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                            //         .setTitle("室內定位功能受限")
+                            //         .setMessage(msg)
+                            //         .setNegativeButton(android.R.string.cancel, null)
+                            //         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            //             @Override
+                            //             public void onClick(DialogInterface dialog, int which) {
+                            //                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            //                 intent.setData(Uri.parse("package:" + getPackageName()));
+                            //                 startActivity(intent);
+                            //             }
+                            //         });
+                            // builder.setCancelable(true);
+                            // builder.show();
+                        }
+                    }
+                }
+                break;
+                case REQUEST_CODE_BLUETOOTH_OPEN: {
+                    if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        verifyBluetooth();
+                    }
+                }
+                break;
+            }
     }
 
     // ─────────────────────────────────────────
