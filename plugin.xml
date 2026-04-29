@@ -54,6 +54,30 @@
             </feature>
         </config-file>
 
+        <config-file target="*-Info.plist" parent="NSBluetoothAlwaysUsageDescription">
+            <string>室內定位需要使用藍牙功能</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
+            <string>AR需要使用攝影機功能</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
+            <string>請求在App使用期間使用定位功能</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
+            <string>請求在App使用期間使用定位功能</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSMicrophoneUsageDescription">
+            <string>語音識別需要用到麥克風功能</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSSpeechRecognitionUsageDescription">
+            <string>請求在App使用期間使用語音識別功能</string>
+        </config-file>
+
+        <!-- 添加框架（如果需要） -->
+        <framework src="CoreLocation.framework" weak="false" />
+        <framework src="AVFoundation.framework" weak="false" />
+        <framework src="Speech.framework" weak="false" />
+
         <header-file src="src/ios/LocNaviWebSDKPlugin.h" />
         <source-file src="src/ios/LocNaviWebSDKPlugin.m" />
         <podspec>

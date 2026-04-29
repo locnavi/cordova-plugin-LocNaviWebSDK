@@ -9,7 +9,15 @@
 #import <LocNaviWebSDK/LocNaviWebSDK.h>
 #import <Cordova/CDVAppDelegate.h>
 
+@interface LocNaviWebSDKPlugin()
+
+// 专门持有「定位结果推送」的 callbackId
+@property (nonatomic, copy) NSString *locationCallbackId;
+
+@end
+
 @implementation LocNaviWebSDKPlugin
+
 
 - (void)init:(CDVInvokedUrlCommand*)command {
     CDVPluginResult* pluginResult = nil;
@@ -121,7 +129,7 @@
         //初始化SDK
         LocNaviLocationService *service = [LocNaviLocationService sharedInstance];
         [service setMapId:mapId];
-        if (serverUrl) {
+        if (serverUrl && serverUrl.length > 0) {
             [service setServerUrl:serverUrl];
         }
 
@@ -136,18 +144,25 @@
 - (void)startLocation:(CDVInvokedUrlCommand*)command {
     CDVPluginResult* pluginResult = nil;
     @try {
-        NSString *mapId = command.arguments[0];
-        NSDictionary *options = command.arguments.count > 1 ? command.arguments[1] : @{};
-        NSString *serverUrl = options[@"serverUrl"];
+        NSDictionary *options = command.arguments.count > 0 ? command.arguments[0] : @{};
+        int mode = options[@"mode"] != NULL ? [options[@"mode"] intValue] : 0;
         
-        //初始化SDK
         LocNaviLocationService *service = [LocNaviLocationService sharedInstance];
-        [service setMapId:mapId];
-        if (serverUrl) {
-            [service setServerUrl:serverUrl];
-        }
+        // 開始定位
+        // 可指定只開啟藍牙定位，暫時未使用 GPS 定位，預設使用 LocNaviConstants.LOCATION_MODE_AUTO
+        // [service start:LocNaviLocationModeAuto];
+        // 獲取更詳細的定位資訊
+        [service start:mode detail:YES];
 
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"init locationService ok"];
+        // 預設每秒返回定位，若調用下面方法，請確保 ScanPeriods 大於 1000。
+        // [service updateScanPeriods:1500 betweenScanPeriod:1000];
+
+        // 新增廣播監聽
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateLocation:) name:LOCNAVI_NOTI_LOCATION object:nil];
+
+        self.locationCallbackId = command.callbackId;
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"startLocation ok"];
+        pluginResult.keepCallback = @YES;
     } @catch (NSException *exception) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
     }
@@ -158,23 +173,37 @@
 - (void)stopLocation:(CDVInvokedUrlCommand*)command {
     CDVPluginResult* pluginResult = nil;
     @try {
-        NSString *mapId = command.arguments[0];
-        NSDictionary *options = command.arguments.count > 1 ? command.arguments[1] : @{};
-        NSString *serverUrl = options[@"serverUrl"];
-        
-        //初始化SDK
         LocNaviLocationService *service = [LocNaviLocationService sharedInstance];
-        [service setMapId:mapId];
-        if (serverUrl) {
-            [service setServerUrl:serverUrl];
-        }
-
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"init locationService ok"];
+        // 停止定位
+        [service stop:LocNaviLocationModeAuto];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:LOCNAVI_NOTI_LOCATION object:nil];
+        
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"stop location ok"];
+        pluginResult.keepCallback = @NO;
+        self.locationCallbackId = nil;
     } @catch (NSException *exception) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
     }
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)updateLocation:(NSNotification *)noti {
+    // noti.object 傳遞 LocNaviLocation 物件
+    if (!self.locationCallbackId || !noti.object) {
+        return;
+    }
+    NSString *locationStr = nil;
+    if ([noti.object isKindOfClass:[LocNaviLocation class]]) {
+        LocNaviLocation *location = noti.object;
+        locationStr = [NSString stringWithFormat:@"{\"longitude\":\"%f\",\"latitude\":\"%f\",\"floor\":%@}", location.coordinate.longitude, location.coordinate.latitude, location.floor && ![location.floor isKindOfClass:[NSNull class]] ? location.floor : @"null"];
+    } else if ([noti.object isKindOfClass:[NSString class]]) {
+        locationStr = [noti.object copy];
+    }
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:locationStr];
+    pluginResult.keepCallback = @YES;
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.locationCallbackId];
 }
 
 @end
